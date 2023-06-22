@@ -17,6 +17,7 @@
         # views
         'views/account_tax_view.xml',
         'views/account_move_view.xml',
+        'views/account_account_view.xml',
         # report
 
         #security
