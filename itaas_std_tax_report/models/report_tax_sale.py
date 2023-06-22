@@ -13,8 +13,8 @@ class report_sale_tax_report(models.AbstractModel):
 
 
     def _get_result_sale_tax(self,data):
-        domain = [('invoice_date', '>=', data['date_from']),
-                  ('invoice_date', '<=', data['date_to']),
+        domain = [('tax_invoice_date', '>=', data['date_from']),
+                  ('tax_invoice_date', '<=', data['date_to']),
                   ('state', 'in', ('posted', 'cancel')),
                   ('move_type', 'in', ('out_invoice', 'out_refund'))]
         docs = self.env['account.move'].search(domain)
