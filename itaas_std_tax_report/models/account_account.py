@@ -9,4 +9,5 @@ from odoo.exceptions import UserError
 class account_account(models.Model):
     _inherit = "account.account"
 
+    sale_tax_report = fields.Boolean(string='รายงานภาษีขาย')
     purchase_tax_report = fields.Boolean(string='รายงานภาษีซื้อ')

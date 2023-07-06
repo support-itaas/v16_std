@@ -306,6 +306,281 @@ class tax_report(models.TransientModel):
 
     def print_report_purchase(self):
         print('print_report_purchase')
+        print('print_report_xls')
+        fl = BytesIO()
+        workbook = xlsxwriter.Workbook(fl)
+        name = self.report_type + '_tax_report'
+        namexls = str(self.report_type) + '_tax_report' + '.xls'
+        worksheet = workbook.add_worksheet(name)
+
+        for_left_bold_no_border = workbook.add_format({'align': 'left', 'bold': True})
+        for_center_bold_no_border = workbook.add_format({'align': 'center', 'bold': True})
+        for_right_bold_no_border = workbook.add_format({'align': 'right', 'bold': True})
+
+        for_left_no_border = workbook.add_format({'align': 'left'})
+        for_center_no_border = workbook.add_format({'align': 'center'})
+        for_right_no_border = workbook.add_format({'align': 'right'})
+
+        for_left_bold = workbook.add_format({'align': 'left', 'bold': True, 'border': True})
+        for_center_bold = workbook.add_format({'align': 'center', 'bold': True, 'border': True})
+        for_right_bold = workbook.add_format({'align': 'right', 'bold': True, 'border': True})
+
+        for_left = workbook.add_format({'align': 'left', 'border': True})
+        for_center = workbook.add_format({'align': 'center', 'border': True})
+        for_right = workbook.add_format({'align': 'right', 'border': True, 'num_format': '#,##0.00'})
+
+        for_right_bold_no_border_date = workbook.add_format({'align': 'right', 'bold': True, 'num_format': 'dd/mm/yy'})
+        for_right_border_num_format = workbook.add_format({'align': 'right', 'border': True, 'num_format': '#,##0.00'})
+        for_right_bold_border_num_format = workbook.add_format(
+            {'align': 'right', 'bold': True, 'border': True, 'num_format': '#,##0.00'})
+
+        for_center_bold_no_border_date = workbook.add_format(
+            {'align': 'center', 'bold': True, 'num_format': 'dd/mm/yy'})
+        for_left_bold_no_border_date = workbook.add_format({'align': 'left', 'bold': True, 'num_format': 'dd/mm/yy'})
+
+        for_center_date = workbook.add_format({'align': 'center', 'border': True, 'num_format': 'dd/mm/yyyy'})
+
+        worksheet.set_column('A:A', 15)
+        worksheet.set_column('B:B', 10)
+        worksheet.set_column('C:C', 10)
+        worksheet.set_column('D:D', 20)
+        worksheet.set_column('E:E', 20)
+        worksheet.set_column('F:F', 10)
+        worksheet.set_column('G:G', 10)
+        worksheet.set_column('H:H', 10)
+        worksheet.set_column('I:I', 10)
+
+        month = self.month
+        print(month)
+        print('==============')
+
+        if month:
+            if month == '1':
+                monthth = 'มกราคม'
+            elif month == '2':
+                monthth = 'กุมภาพันธ์'
+            elif month == '3':
+                monthth = 'มีนาคม'
+            elif month == '3':
+                monthth = 'มีนาคม'
+            elif month == '4':
+                monthth = 'เมษายน'
+            elif month == '5':
+                monthth = 'พฤษภาคม'
+            elif month == '6':
+                monthth = 'มิถุนายน'
+            elif month == '7':
+                monthth = 'กรกฏาคม'
+            elif month == '8':
+                monthth = 'สิงหาคม'
+            elif month == '9':
+                monthth = 'กันยายน'
+            elif month == '10':
+                monthth = 'ตุลาคม'
+            elif month == '11':
+                monthth = 'พฤศจิกายน'
+            else:
+                monthth = 'ธันวาคม'
+
+        year = self.year
+        company_id = self.env.company
+
+        inv_row = 3
+        worksheet.write(inv_row, 0, 'เดือนภาษี', for_left_bold_no_border)
+        worksheet.write(inv_row, 1, monthth, for_left_no_border)
+        worksheet.write(inv_row, 4, 'ปี', for_left_bold_no_border)
+        worksheet.write(inv_row, 5, year, for_left_no_border)
+
+        inv_row += 1
+        worksheet.write(inv_row, 0, 'ชื่อผู้ประกอบการ', for_left_bold_no_border)
+        worksheet.write(inv_row, 1, company_id.name, for_left_no_border)
+        worksheet.write(inv_row, 4, 'เลขประจำผู้เสียภาษีอากร', for_left_bold_no_border)
+        worksheet.write(inv_row, 5, company_id.vat, for_left_no_border)
+
+        inv_row += 1
+        worksheet.write(inv_row, 0, 'ชื่อสถานประกอบการ', for_left_bold_no_border)
+        worksheet.write(inv_row, 1, company_id.name, for_left_no_border)
+        worksheet.write(inv_row, 4, 'สำนักงานใหญ่ / สาขา', for_left_bold_no_border)
+        if company_id.branch_no:
+            if company_id.branch_no == '00000':
+                branch_no = 'สำนักงานใหญ่'
+            else:
+                branch_no = 'สาขา' + ' ' + company_id.branch_no
+            # branch_no = company_id.branch_no if company_id.branch_no == '00000' else 'สำนักงานใหญ่'
+            worksheet.write(inv_row, 5, branch_no, for_left_no_border)
+        else:
+            worksheet.write(inv_row, 5, 'สำนักงานใหญ่', for_left_no_border)
+
+        inv_row += 1
+        worksheet.write(inv_row, 0, 'สถานประกอบการ', for_left_bold_no_border)
+        company_address = company_id.get_company_full_address_text()
+        worksheet.write(inv_row, 1, company_address, for_left_no_border)
+
+        inv_row += 3
+        inv_row_merge_head = inv_row + 1
+        worksheet.merge_range('A' + str(inv_row) + ':A' + str(inv_row_merge_head), "ลำดับที่", for_center_bold)
+        worksheet.merge_range('B' + str(inv_row) + ':C' + str(inv_row), "ใบกำกับภาษี", for_center_bold)
+        worksheet.write('B' + str(inv_row_merge_head), 'วัน เดือน ปี', for_center_bold)
+        worksheet.write('C' + str(inv_row_merge_head), 'เลขที่', for_center_bold)
+        worksheet.merge_range('D' + str(inv_row) + ':D' + str(inv_row_merge_head), "ชื่อผู้ซื้อสินค้า/ผู้รับบริการ",
+                              for_center_bold)
+        worksheet.merge_range('E' + str(inv_row) + ':E' + str(inv_row_merge_head),
+                              'เลขประจำตัวผู้เสียภาษีอากร\nของผู้ซื้อสินค้า/ผู้รับบริการ', for_center_bold)
+        worksheet.merge_range('F' + str(inv_row) + ':G' + str(inv_row), "สถานประกอบการ", for_center_bold)
+        worksheet.write('F' + str(inv_row_merge_head), 'สำนักงานใหญ่', for_center_bold)
+        worksheet.write('G' + str(inv_row_merge_head), 'สาขาที่', for_center_bold)
+        worksheet.merge_range('H' + str(inv_row) + ':H' + str(inv_row_merge_head), "มูลค่าสินค้าหรือบริการ",
+                              for_center_bold)
+        worksheet.merge_range('I' + str(inv_row) + ':I' + str(inv_row_merge_head), "จำนวนเงินภาษีมูลค่าเพิ่ม",
+                              for_center_bold)
+        worksheet.merge_range('J' + str(inv_row) + ':J' + str(inv_row_merge_head), "รวม",
+                              for_center_bold)
+        worksheet.merge_range('K' + str(inv_row) + ':K' + str(inv_row_merge_head), "หมายเหตุ",
+                              for_center_bold)
+
+        data = {
+            'date_from': self.date_from,
+            'date_to': self.date_to,
+            'report_type': self.report_type,
+            'company_id': self.company_id,
+            'vat_0':self.vat_0,
+            'vat_7':self.vat_7,
+        }
+        report_values = self.env['report.itaas_std_tax_report.purchase_tax_report_id']._get_report_values(self,
+                                                                                                            data=data)
+        move_lines = report_values.get('docs')
+        print('move_lines : ', move_lines)
+
+        worksheet.merge_range('A1:I1', "รายงานภาษีซื้อ", for_center_bold_no_border)
+        amount_total = 0
+        before_total = 0
+        amount_tax_total = 0
+        if move_lines:
+            sl_no = 1
+            for ml in move_lines:
+                print('ml:', ml)
+                inv_row += 1
+                worksheet.write(inv_row, 0, sl_no, for_center)
+                worksheet.write(inv_row, 1, ml['date'] or '', for_center_date)
+                worksheet.write(inv_row, 2, ml['ref'], for_left)
+                worksheet.write(inv_row, 3, ml['partner'].name, for_left)
+                worksheet.write(inv_row, 4, ml['vat'], for_left)
+                if ml['branch'] == '00000':
+                    worksheet.write(inv_row, 5, ml['branch'], for_right)
+                    worksheet.write(inv_row, 6, '', for_left)
+                else:
+                    worksheet.write(inv_row, 5, ' ', for_left)
+                    worksheet.write(inv_row, 6, ml['branch'], for_right)
+                if ml['debit']:
+                    amount_tax = ml['debit']
+                elif ml['credit']:
+                    amount_tax = ml['credit']
+                else:
+                    amount_tax = 0
+                if ml['amount_untaxed']:
+                    if ml['type'] == 'in_refund':
+                        if ml['amount_untaxed'] > 0:
+                            amount_untax = ml['amount_untaxed'] * (-1)
+                        else:
+                            amount_untax = ml['amount_untaxed']
+                    else:
+                        amount_untax = ml['amount_untaxed']
+                else:
+                    amount_untax = amount_tax * 100 / 7
+                if ml['type'] == 'in_refund':
+                    if ml['state'] == 'cancel':
+                        if ml['debit']:
+                            worksheet.write(inv_row, 7, '0.00', for_right_border_num_format)
+                        else:
+                            worksheet.write(inv_row, 7, '0.00', for_right_border_num_format)
+                            before_total += amount_untax
+                    else:
+                        if ml['debit']:
+                            worksheet.write(inv_row, 7, amount_untax, for_right_border_num_format)
+                            before_total += amount_untax
+                        else:
+                            worksheet.write(inv_row, 7, amount_untax, for_right_border_num_format)
+                            before_total += amount_untax
+                else:
+                    if ml['state'] == 'cancel':
+                        if ml['debit']:
+                            worksheet.write(inv_row, 7, '0.00', for_right_border_num_format)
+                        else:
+                            worksheet.write(inv_row, 7, '0.00', for_right_border_num_format)
+                            before_total += amount_untax
+                    else:
+                        if ml['debit']:
+                            worksheet.write(inv_row, 7, amount_untax, for_right_border_num_format)
+                            before_total += amount_untax
+                        else:
+                            worksheet.write(inv_row, 7, amount_untax, for_right_border_num_format)
+                            before_total += amount_untax
+
+                if ml['type'] == 'in_refund':
+                    if ml['state'] == 'cancel':
+                        if ml['debit']:
+                            debit_credit = ml['debit']
+                        elif ml['credit']:
+                            debit_credit = ml['credit']
+                        worksheet.write(inv_row, 8, '0.00', for_right_border_num_format)
+                        worksheet.write(inv_row, 9, '0.00', for_right_border_num_format)
+                        amount_total += '0.00' + amount_untax
+                        worksheet.write(inv_row, 10, 'ยกเลิก (Cancel)', for_right)
+                    else:
+                        if ml['debit']:
+                            debit_credit = ml['debit']
+                        elif ml['credit']:
+                            debit_credit = ml['credit']
+                        else:
+                            debit_credit = 0
+                        worksheet.write(inv_row, 8, ml['debit'] or ml['credit'] * (-1), for_right_border_num_format)
+                        worksheet.write(inv_row, 9, (debit_credit * (-1) + amount_untax),
+                                        for_right_border_num_format)
+                        amount_total += (debit_credit * (-1)) + amount_untax
+                        worksheet.write(inv_row, 10, 'ยกเลิก (Cancel)', for_right)
+                        worksheet.write(inv_row, 10, ml['note'], for_right)
+
+                else:
+                    if ml['state'] == 'cancel':
+                        worksheet.write(inv_row, 8, '0.00', for_right_border_num_format)
+                        worksheet.write(inv_row, 9, '0.00', for_right_border_num_format)
+                        worksheet.write(inv_row, 10, 'ยกเลิก (Cancel)', for_right)
+                    else:
+                        worksheet.write(inv_row, 8, ml['debit'] or ml['credit'], for_right_border_num_format)
+                        worksheet.write(inv_row, 9, ml['debit'] + ml['credit'] + amount_untax,
+                                        for_right_border_num_format)
+                        amount_total += ml['debit'] + ml['credit'] + amount_untax
+                        worksheet.write(inv_row, 10, ml['note'], for_right)
+
+                sl_no += 1
+                if ml['type'] == 'in_refund':
+                    if ml['state'] != 'cancel':
+                        amount_tax_total += ml['debit'] * (-1)
+                        amount_tax_total += ml['credit'] * (-1)
+                else:
+                    if ml['state'] != 'cancel':
+                        amount_tax_total += ml['debit']
+                        amount_tax_total += ml['credit']
+            inv_row += 1
+            worksheet.write(inv_row, 6, 'Total', for_center_bold)
+            worksheet.write(inv_row, 7, before_total, for_right_bold_border_num_format)
+            worksheet.write(inv_row, 8, amount_tax_total, for_right_bold_border_num_format)
+            worksheet.write(inv_row, 9, amount_total, for_right_bold_border_num_format)
+
+        workbook.close()
+        buf = fl.getvalue()
+        # vals = {'name': namexls, 'report_file': base64.encodestring(buf)}
+        vals = {'name': namexls, 'report_file': base64.encodebytes(buf)}
+        self._cr.execute("TRUNCATE tax_excel_export CASCADE")
+        wizard_id = self.env['tax.excel.export'].create(vals)
+        return {
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'tax.excel.export',
+            'target': 'new',
+            'res_id': wizard_id.id,
+        }
 
 class tax_excel_export(models.TransientModel):
     _name = 'tax.excel.export'

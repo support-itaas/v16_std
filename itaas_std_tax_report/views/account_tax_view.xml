@@ -6,6 +6,7 @@
 	    <field name="arch" type="xml">
 	    	<field name="include_base_amount" position="after">
 				<field name="tax_report"/>
+				<field name="tax_report"/>
 	    	</field>
 	    </field>
     </record>
