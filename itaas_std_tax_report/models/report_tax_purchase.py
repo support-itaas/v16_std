@@ -21,7 +21,7 @@ class report_sale_tax_report(models.AbstractModel):
             domain = [('account_id.purchase_tax_report', '=', True),
                       ('tax_inv_date', '>=', data['date_from']),
                       ('tax_inv_date', '<=', data['date_to']),
-                      ('move_id.state', 'in', ('posted')),
+                      ('move_id.state', '=', 'posted'),
                       ('date_maturity', '=', False),
                       ('move_id.move_type', 'in', ('in_invoice', 'in_refund', 'entry')),
                       ('operating_unit_id', 'in', data['operating_unit'])]
@@ -30,7 +30,7 @@ class report_sale_tax_report(models.AbstractModel):
             domain = [('account_id.purchase_tax_report', '=', True),
                       ('tax_inv_date', '>=', data['date_from']),
                       ('tax_inv_date', '<=', data['date_to']),
-                      ('move_id.state', 'in', ('posted')),
+                      ('move_id.state', '=', 'posted'),
                       ('date_maturity', '=', False),
                       ('move_id.move_type', 'in', ('in_invoice', 'in_refund', 'entry'))]
         if data['vat_0'] == True:
@@ -38,7 +38,7 @@ class report_sale_tax_report(models.AbstractModel):
             domain = [('tax_ids', '!=', False),
                       ('tax_inv_date', '>=', data['date_from']),
                       ('tax_inv_date', '<=', data['date_to']),
-                      ('move_id.state', 'in', ('posted', 'cancel')),
+                      ('move_id.state', '=', 'posted'),
                       ('move_id.move_type', 'in', ('in_invoice', 'in_refund', 'entry'))]
             docs = self.env['account.move.line'].search(domain)
             print('______docs:',docs)
@@ -384,7 +384,7 @@ class report_sale_tax_report(models.AbstractModel):
             domain = [('account_id.purchase_tax_report', '=',True),
                       ('tax_inv_date', '>=', data['date_from']),
                       ('tax_inv_date', '<=', data['date_to']),
-                      ('move_id.state', 'in', ('posted')),
+                      ('move_id.state', '=', 'posted'),
                       ('is_special_tax', '=', True),
                       ('move_id.move_type', 'in', ('in_invoice', 'in_refund', 'entry')),
                       ('operating_unit_id', 'in', data['operating_unit'])
@@ -394,10 +394,9 @@ class report_sale_tax_report(models.AbstractModel):
             domain = [('account_id.purchase_tax_report', '=',True),
                       ('tax_inv_date', '>=', data['date_from']),
                       ('tax_inv_date', '<=', data['date_to']),
-                      ('move_id.state', 'in', ('posted')),
+                      ('move_id.state', '=', 'posted'),
                       ('move_id.move_type', 'in', ('in_invoice', 'in_refund', 'entry')),
                       ('is_special_tax', '=', True)]
-
         if data['vat_7'] == True:
             print('Case_vat_7')
             tax = self.env['account.tax'].search([('tax_report', '=', True),
